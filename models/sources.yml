@@ -1,0 +1,44 @@
+version: 2
+
+sources:
+- name: test_data
+  schema: test_data
+  tables:
+  - name: sheet1
+    external:
+      location: "data/test-data.xlsx"
+      using: excel
+      options:
+        sep: ","
+        header: true
+      partitions:
+      - name: retrieval_date
+        data_type: date
+    columns:
+    - name: "`EDINET Code`"
+      data_type: string
+    - name: "`Type of Submitter`"
+      data_type: string
+    - name: "`Listed company / Unlisted company`"
+      data_type: string
+    - name: "`Consolidated / NonConsolidated`"
+      data_type: string
+    - name: "`Capital stock`"
+      data_type: string
+    - name: "`account closing date`"
+      data_type: string
+    - name: "`Submitter name`"
+      data_type: string
+    - name: "`Submitter name (alphabetic)`"
+      data_type: string
+    - name: "`Submitter name (phonetic)`"
+      data_type: string
+    - name: "`Province`"
+      data_type: string
+    - name: "`Submitter's industry`"
+      data_type: string
+    - name: "`Securities Identification Code`"
+      data_type: string
+    - name: "`Submitter's Japan Corporate Number`"
+      data_type: string
+
