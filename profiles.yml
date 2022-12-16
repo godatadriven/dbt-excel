@@ -1,0 +1,8 @@
+dbt_excel:
+  target: dev
+  outputs:
+    dev:
+      type: spark
+      method: session
+      schema: test
+      host: NA        # not used, but required by `dbt-core`
