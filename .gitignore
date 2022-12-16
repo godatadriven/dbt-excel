@@ -1,4 +1,5 @@
-
+derby.log
+metastore_db/
 target/
 dbt_packages/
 logs/
