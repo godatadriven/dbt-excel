@@ -13,3 +13,11 @@ Try running the following commands:
 - Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
 - Find [dbt events](https://events.getdbt.com) near you
 - Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+
+# Set-up
+
+We added to the `SparkSession.getOrCreate()` in `dbt/adapters/spark/session.py`:
+
+```
+.config("spark.jars.packages", "com.crealytics:spark-excel_2.12:3.3.1_0.18.5")
+```
