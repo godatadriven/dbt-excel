@@ -1,0 +1,6 @@
+dbt_excel:
+  target: dev
+  outputs:
+   dev:
+     type: duckdb
+     path: /tmp/dbt.duckdb
