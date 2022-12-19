@@ -59,6 +59,11 @@ class DuckDBAdapter(SQLAdapter):
             return False
 
     @available
+    def output_excel(self, location):
+        import pandas as pd
+        pd.read_csv(location).to_excel("haaaaaai.xlsx")
+
+    @available
     def register_glue_table(
         self,
         glue_database: str,

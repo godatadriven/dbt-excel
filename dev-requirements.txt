@@ -15,6 +15,7 @@ freezegun==1.2.2
 ipdb
 mypy==0.991
 pip-tools
+openpyxl
 pre-commit
 pytest
 pytest-dotenv
