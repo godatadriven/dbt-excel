@@ -1,5 +1,11 @@
-
 version: 2
+
+sources:
+  - name: "my"
+    meta:
+      external_location: "/Users/henkgriffioen/gdd/dbt-excel/dbt_project/{name}.xlsx"
+    tables:
+      - name: excel_source
 
 models:
   - name: my_first_dbt_model

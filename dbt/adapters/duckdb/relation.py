@@ -34,6 +34,16 @@ class DuckDBRelation(BaseRelation):
             ext_location = ext_location.format(
                 schema=source.schema, name=source.name, identifier=source.identifier
             )
+            if ".xlsx" in ext_location:
+                if ext_location.startswith("'"):
+                    ext_location = ext_location[1:-1]
+                import pandas as pd
+                df = pd.read_excel(ext_location)
+                temp_file = "/Users/henkgriffioen/gdd/dbt-excel/dbt_project/temp.csv"
+                df.to_csv(temp_file, index=False)
+                kwargs["external_location"] = f"'{temp_file}'"
+                return super().create_from_source(source, **kwargs)  # type: ignore
+
             # If it's a function call or already has single quotes, don't add them
             if "(" not in ext_location and not ext_location.startswith("'"):
                 ext_location = f"'{ext_location}'"
