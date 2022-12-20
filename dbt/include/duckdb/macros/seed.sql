@@ -29,7 +29,7 @@
             {% do statements.append(sql) %}
         {% endif %}
 
-        {% do adapter.write_excel_table(this.render(), agate_table.column_names) %}
+        {% do adapter.write_excel_table(this) %}
 
     {% endfor %}
 

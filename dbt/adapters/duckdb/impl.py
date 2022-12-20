@@ -61,15 +61,15 @@ class DuckDBAdapter(SQLAdapter):
             return False
 
     @available
-    def write_excel_table(self, table: str, column_list: Sequence[Column]) -> None:
+    def write_excel_table(self, table: str) -> None:
         connection = self.connections.get_if_exists()
         if not connection:
             connection = self.connections.get_thread_connection()
         con = connection.handle._conn
         
         table_data = con.query(f"select * from {table}")
-        
-        create_or_update_table(table, column_list, table_data.df())
+    
+        create_or_update_table(str(table).split('.')[-1], table_data.df(), credentials=self.config.credentials)
 
 
 

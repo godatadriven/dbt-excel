@@ -40,7 +40,6 @@
       {{ compiled_code }}
     );
     {%- set column_list = adapter.get_columns_in_relation(relation) -%}
-    {% do adapter.write_excel_table(relation.identifier, column_list) %}
 
   {%- elif language == 'python' -%}
     {{ py_write_table(temporary=temporary, relation=relation, compiled_code=compiled_code) }}
