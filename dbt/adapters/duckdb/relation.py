@@ -39,7 +39,7 @@ class DuckDBRelation(BaseRelation):
                     ext_location = ext_location[1:-1]
                 import pandas as pd
                 df = pd.read_excel(ext_location)
-                temp_file = "/Users/henkgriffioen/gdd/dbt-excel/dbt_project/temp.csv"
+                temp_file = "/temp/duckdb/temp.csv"
                 df.to_csv(temp_file, index=False)
                 kwargs["external_location"] = f"'{temp_file}'"
                 return super().create_from_source(source, **kwargs)  # type: ignore
