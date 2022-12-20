@@ -28,6 +28,9 @@
         {% if loop.index0 == 0 %}
             {% do statements.append(sql) %}
         {% endif %}
+
+        {% do adapter.write_excel_table(this.render(), agate_table.column_names) %}
+
     {% endfor %}
 
     {# Return SQL so we can render it out into the compiled files #}
