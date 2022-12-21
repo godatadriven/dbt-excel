@@ -62,14 +62,16 @@ class DuckDBAdapter(SQLAdapter):
 
     @available
     def write_excel_table(self, table: str) -> None:
-        connection = self.connections.get_if_exists()
-        if not connection:
-            connection = self.connections.get_thread_connection()
-        con = connection.handle._conn
-        
-        table_data = con.query(f"select * from {table}")
-    
-        create_or_update_table(str(table).split('.')[-1], table_data.df(), credentials=self.config.credentials)
+        # commit first to make sure data exists in database
+        try:
+            self.connections.commit_if_has_connection()
+        except InternalException:
+            pass
+
+        # retrieve data to write to excel
+        table_data = self.ConnectionManager.CONN.execute(f"select * from {table}")
+        table_name = str(table).split('.')[-1][1:-1] # remove database name and quotes
+        create_or_update_table(table_name, table_data.df(), credentials=self.config.credentials)
 
 
 

@@ -5,15 +5,25 @@ from typing import Sequence
 from typing import Union
 from pandas import DataFrame
 
-import pandas
-from pandas import DataFrame
+import pandas as pd
+import os
 
-from dbt.adapters.base.column import Column
+excel_writer = None
+
+def _get_excel_writer(path: str) -> pd.ExcelWriter:
+    global excel_writer
+    if not excel_writer:
+        if not os.path.exists(path):
+            pd.DataFrame().to_excel(path)
+        excel_writer = pd.ExcelWriter(path, engine="openpyxl", mode="a", if_sheet_exists="replace")
+    return excel_writer
+
 
 # TODO: instantiate pandas excel writer object as "client" to pass through to write multiple sheets in one file
 
-def _create_table(client, table, data: DataFrame, path: str) -> None:
-    data.to_excel(str(path), sheet_name=table, index=False)
+def _create_table(client, table, data: DataFrame) -> None:
+    with client:
+        data.to_excel(client, sheet_name=table, index=False)
 
 
 def _update_table(client, database, table_def) -> None:
@@ -30,6 +40,6 @@ def create_or_update_table(
     credentials,
     **kwargs: Optional[Dict[str, Union[str, int]]],
 ) -> None:
-        # TODO: Check if table already exists
-        _create_table(client="", table=table, data=data, path=credentials.path)
+        client = _get_excel_writer(credentials.path)
+        _create_table(client, table=table, data=data)
         
