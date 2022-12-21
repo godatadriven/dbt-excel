@@ -36,12 +36,7 @@ setup(
     url="https://github.com/jwills/dbt-duckdb",
     packages=find_namespace_packages(include=["dbt", "dbt.*"]),
     include_package_data=True,
-    install_requires=[
-        "dbt-core~=1.3.0",
-        "duckdb>=0.5.0",
-        "pandas",
-        "openpyxl"
-    ],
+    install_requires=["dbt-core~=1.3.0", "duckdb>=0.5.0", "pandas", "openpyxl"],
     extras_require={
         "glue": ["boto3", "mypy-boto3-glue"],
     },

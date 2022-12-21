@@ -6,6 +6,7 @@ from typing import Optional
 from typing import Sequence
 
 import agate
+import pandas as pd
 
 from dbt.adapters.base import BaseRelation
 from dbt.adapters.base.column import Column
@@ -60,7 +61,6 @@ class DuckDBAdapter(SQLAdapter):
 
     @available
     def output_excel(self, location):
-        import pandas as pd
         pd.read_csv(location).to_excel("haaaaaai.xlsx")
 
     @available
