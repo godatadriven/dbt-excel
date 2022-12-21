@@ -6,6 +6,7 @@ from typing import Optional
 from typing import Sequence
 
 import agate
+import pandas as pd
 
 from dbt.adapters.base import BaseRelation
 from dbt.adapters.base.column import Column
@@ -57,6 +58,10 @@ class DuckDBAdapter(SQLAdapter):
             return True
         except RuntimeException:
             return False
+
+    @available
+    def output_excel(self, location):
+        pd.read_csv(location).to_excel("haaaaaai.xlsx")
 
     @available
     def register_glue_table(

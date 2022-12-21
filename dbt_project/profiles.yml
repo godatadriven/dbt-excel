@@ -4,3 +4,6 @@ dbt_excel:
    dev:
      type: duckdb
      path: /tmp/dbt.duckdb
+     extensions:
+      - parquet
+      - httpfs
