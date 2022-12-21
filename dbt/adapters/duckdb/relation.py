@@ -1,11 +1,14 @@
+import pathlib
 from dataclasses import dataclass
 from typing import Any
 from typing import Optional
 from typing import Type
 
+import pandas as pd
 from dbt.adapters.base.relation import BaseRelation
 from dbt.adapters.base.relation import Self
 from dbt.contracts.graph.parsed import ParsedSourceDefinition
+
 
 
 @dataclass(frozen=True, eq=False, repr=False)
@@ -13,7 +16,9 @@ class DuckDBRelation(BaseRelation):
     external_location: Optional[str] = None
 
     @classmethod
-    def create_from_source(cls: Type[Self], source: ParsedSourceDefinition, **kwargs: Any) -> Self:
+    def create_from_source(
+        cls: Type[Self], source: ParsedSourceDefinition, **kwargs: Any
+    ) -> Self:
 
         # Some special handling here to allow sources that are external files to be specified
         # via a `external_location` meta field. If the source's meta field is used, we include
@@ -35,13 +40,18 @@ class DuckDBRelation(BaseRelation):
                 schema=source.schema, name=source.name, identifier=source.identifier
             )
             if ".xlsx" in ext_location:
+
+                # Strip quotes.
                 if ext_location.startswith("'"):
                     ext_location = ext_location[1:-1]
-                import pandas as pd
+
                 df = pd.read_excel(ext_location)
-                temp_file = "/temp/duckdb/temp.csv"
-                df.to_csv(temp_file, index=False)
-                kwargs["external_location"] = f"'{temp_file}'"
+                TEMP_DIR = pathlib.Path("/tmp/dbt-excel/")
+                TEMP_DIR.mkdir(exist_ok=True)
+                filename = pathlib.Path(ext_location).with_suffix(".csv").name
+                temp_path = TEMP_DIR / filename
+                df.to_csv(temp_path, index=False)
+                kwargs["external_location"] = f"'{temp_path}'"
                 return super().create_from_source(source, **kwargs)  # type: ignore
 
             # If it's a function call or already has single quotes, don't add them
