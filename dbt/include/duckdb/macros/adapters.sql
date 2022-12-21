@@ -39,6 +39,8 @@
     as (
       {{ compiled_code }}
     );
+    {%- set column_list = adapter.get_columns_in_relation(relation) -%}
+
   {%- elif language == 'python' -%}
     {{ py_write_table(temporary=temporary, relation=relation, compiled_code=compiled_code) }}
   {%- else -%}

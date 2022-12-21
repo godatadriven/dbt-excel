@@ -24,6 +24,7 @@ class DuckDBCredentials(Credentials):
     database: str = "main"
     schema: str = "main"
     path: str = ":memory:"
+    duckdb_path: str = ":memory:"
 
     # any extensions we want to install and load (httpfs, parquet, etc.)
     extensions: Optional[Tuple[str, ...]] = None
@@ -104,7 +105,7 @@ class DuckDBConnectionManager(SQLConnectionManager):
         with cls.LOCK:
             try:
                 if not cls.CONN:
-                    cls.CONN = duckdb.connect(credentials.path, read_only=False)
+                    cls.CONN = duckdb.connect(credentials.duckdb_path, read_only=False)
 
                     # install any extensions on the connection
                     if credentials.extensions is not None:
