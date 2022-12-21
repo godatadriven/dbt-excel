@@ -1,5 +1,11 @@
-
 version: 2
+
+sources:
+  - name: "mock_data"
+    meta:
+      external_location: "./sources/people.xlsx"
+    tables:
+      - name: people
 
 models:
   - name: my_first_dbt_model
@@ -11,11 +17,9 @@ models:
           - unique
           - not_null
 
-  - name: my_second_dbt_model
+  - name: total_income
     description: "A starter dbt model"
     columns:
-      - name: id
-        description: "The primary key for this table"
+      - name: total_income
         tests:
-          - unique
           - not_null
