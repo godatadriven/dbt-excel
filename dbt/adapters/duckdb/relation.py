@@ -5,6 +5,7 @@ from typing import Optional
 from typing import Type
 
 import pandas as pd
+
 from dbt.adapters.base.relation import BaseRelation
 from dbt.adapters.base.relation import Self
 from dbt.contracts.graph.parsed import ParsedSourceDefinition
