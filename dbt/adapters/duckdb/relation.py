@@ -10,7 +10,6 @@ from dbt.adapters.base.relation import Self
 from dbt.contracts.graph.parsed import ParsedSourceDefinition
 
 
-
 @dataclass(frozen=True, eq=False, repr=False)
 class DuckDBRelation(BaseRelation):
     external_location: Optional[str] = None
