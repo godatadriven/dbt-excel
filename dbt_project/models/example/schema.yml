@@ -17,8 +17,17 @@ models:
           - unique
           - not_null
 
-  - name: total_income
+  - name: my_second_dbt_model
     description: "A starter dbt model"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+      - name: total_income
+        tests:
+          - not_null
+
+  - name: total_income
+    description: "Aggregate on Excel"
     columns:
       - name: total_income
         tests:
