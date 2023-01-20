@@ -22,7 +22,7 @@ sources:
       - name: seeds_ost
         identifier: "seeds_other_source_table"
         meta:
-          external_location: "read_csv_auto('./seeds/{identifier}.xlsx')"
+          external_location: "./seeds/{identifier}.xlsx"
 """
 
 models_source_model_sql = """select * from {{ source('external_source', 'seeds_source') }}
