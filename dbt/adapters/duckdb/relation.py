@@ -39,10 +39,7 @@ class DuckDBRelation(BaseRelation):
             )
             if ".xlsx" in ext_location:
 
-                # Strip quotes.
-                if ext_location.startswith("'"):
-                    ext_location = ext_location[1:-1]
-
+                ext_location = ext_location.strip("'")
                 df = pd.read_excel(ext_location)
                 TEMP_DIR = pathlib.Path("/tmp/dbt-excel/")
                 TEMP_DIR.mkdir(exist_ok=True)
