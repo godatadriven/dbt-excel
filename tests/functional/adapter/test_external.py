@@ -29,10 +29,15 @@ config_materialized_csv_delim = """
   {{ config(materialized="external", format="csv", location="test_delim.csv", delimiter="|") }}
 """
 
+config_materialized_xlsx = """
+  {{ config(materialized="external", format="xlsx", location="test") }}
+"""
+
 default_external_sql = config_materialized_default + model_base
 parquet_table_location_sql = config_materialized_parquet_with_location + model_base
 csv_table_sql = config_materialized_csv + model_base
 csv_table_delim_sql = config_materialized_csv_delim + model_base
+xlsx_table_sql = config_materialized_xlsx + model_base
 
 
 class BaseExternalMaterializations:
@@ -44,6 +49,7 @@ class BaseExternalMaterializations:
             "table_parquet.sql": parquet_table_location_sql,
             "table_csv.sql": csv_table_sql,
             "table_csv_delim.sql": csv_table_delim_sql,
+            "table_xlsx.sql": xlsx_table_sql,
             "schema.yml": schema_base_yml,
         }
 
@@ -69,7 +75,7 @@ class BaseExternalMaterializations:
         # run command
         results = run_dbt()
         # run result length
-        assert len(results) == 5
+        assert len(results) == 6
 
         # names exist in result nodes
         check_result_nodes_by_name(
@@ -80,6 +86,7 @@ class BaseExternalMaterializations:
                 "table_parquet",
                 "table_csv",
                 "table_csv_delim",
+                "table_xlsx",
             ],
         )
 
@@ -91,6 +98,7 @@ class BaseExternalMaterializations:
             "table_model": "table",
             "table_csv": "view",
             "table_csv_delim": "view",
+            "table_xlsx": "view",
         }
         check_relation_types(project.adapter, expected)
 
@@ -109,12 +117,13 @@ class BaseExternalMaterializations:
                 "table_model",
                 "table_csv",
                 "table_csv_delim",
+                "table_xlsx",
             ],
         )
 
         # check relations in catalog
         catalog = run_dbt(["docs", "generate"])
-        assert len(catalog.nodes) == 6
+        assert len(catalog.nodes) == 7
         assert len(catalog.sources) == 1
 
 

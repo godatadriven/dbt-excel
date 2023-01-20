@@ -196,6 +196,11 @@ def materialize(df, con):
       copy {{ relation }} to '{{ location }}' (HEADER 1, DELIMITER '{{ delimiter }}');
     {% endset %}
 
+  {% elif format == 'xlsx' %}
+    {% set copy_to %}
+      copy {{ relation }} to '{{ location + ".csv" }}' (FORMAT 'csv');
+    {% endset %}
+
   {% else %}
       {% do exceptions.raise_compiler_error("%s external format is not supported!" % format) %}
   {% endif %}

@@ -47,7 +47,7 @@
 
   -- write an temp relation into file
   {{ write_to_file(temp_relation, location, format, delimiter) }}
-  {{ adapter.output_excel(location) }}
+
 
   -- create a view on top of the location
   {% call statement('main', language='sql') -%}
@@ -55,6 +55,17 @@
         select * from '{{ location }}'
     );
   {%- endcall %}
+
+  {% if format == "xlsx" %}
+    {{ adapter.output_excel(location) }}
+
+    {% call statement('main', language='sql') -%}
+      create or replace view {{ intermediate_relation.include(database=False) }} as (
+          select * from '{{ location + ".csv" }}'
+      );
+    {%- endcall %}
+
+  {% endif %}
 
   -- cleanup
   {% if existing_relation is not none %}
