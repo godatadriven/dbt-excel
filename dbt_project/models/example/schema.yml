@@ -1,5 +1,11 @@
-
 version: 2
+
+sources:
+  - name: "mock_data"
+    meta:
+      external_location: "./sources/people.xlsx"
+    tables:
+      - name: people
 
 models:
   - name: my_first_dbt_model
@@ -16,6 +22,13 @@ models:
     columns:
       - name: id
         description: "The primary key for this table"
+      - name: total_income
         tests:
-          - unique
+          - not_null
+
+  - name: total_income
+    description: "Aggregate on Excel"
+    columns:
+      - name: total_income
+        tests:
           - not_null

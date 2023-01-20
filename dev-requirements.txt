@@ -14,6 +14,7 @@ flaky
 freezegun==1.2.2
 ipdb
 mypy==0.991
+openpyxl
 pip-tools
 pre-commit
 pytest
