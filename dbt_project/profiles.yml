@@ -4,3 +4,4 @@ dbt_excel:
    dev:
      type: duckdb
      path: my_excel.xlsx
+     duckdb_path: "myduck.db"
