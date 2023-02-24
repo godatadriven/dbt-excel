@@ -88,7 +88,8 @@ class DuckDBAdapter(SQLAdapter):
     @available
     def output_excel(self, location):
         import pandas as pd
-        pd.read_parquet(location + ".parquet").to_excel("haaaaaai.xlsx")
+
+        pd.read_parquet(location + ".parquet").to_excel(location)
 
     def valid_incremental_strategies(self) -> Sequence[str]:
         """DuckDB does not currently support MERGE statement."""
