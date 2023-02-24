@@ -1,7 +1,7 @@
 {% materialization external, adapter="duckdb", supported_languages=['sql', 'python'] %}
 
   {%- set format = render(config.get('format', default='parquet')) -%}
-  {%- set location = render(config.get('location', default=external_location(format))) -%}
+  {%- set location = render(config.get('location', default=external_location(this, format))) -%}
   {%- set delimiter = render(config.get('delimiter', default=',')) -%}
   {%- set glue_register = config.get('glue_register', default=false) -%}
   {%- set glue_database = render(config.get('glue_database', default='default')) -%}
@@ -49,7 +49,7 @@
   {{ write_to_file(temp_relation, location, format, delimiter) }}
   -- create a view on top of the location
   {% call statement('main', language='sql') -%}
-    create or replace view {{ intermediate_relation.include(database=False) }} as (
+    create or replace view {{ intermediate_relation.include(database=adapter.use_database()) }} as (
         select * from '{{ location }}'
     );
   {%- endcall %}

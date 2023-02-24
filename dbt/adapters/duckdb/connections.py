@@ -1,9 +1,13 @@
 import atexit
+import os
 import threading
+import time
 from contextlib import contextmanager
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Any
 from typing import Dict
+from typing import List
 from typing import Optional
 from typing import Tuple
 
@@ -17,6 +21,35 @@ from dbt.contracts.connection import AdapterResponse
 from dbt.contracts.connection import Connection
 from dbt.contracts.connection import ConnectionState
 from dbt.logger import GLOBAL_LOGGER as logger
+
+
+@dataclass
+class Attachment:
+    # The path to the database to be attached; may be a URL
+    path: str
+
+    # The type of the attached database (defaults to duckdb, but may be supported by an extension)
+    type: Optional[str] = None
+
+    # An optional alias for the attached database
+    alias: Optional[str] = None
+
+    # Whether the attached database is read-only or read/write
+    read_only: bool = False
+
+    def to_sql(self) -> str:
+        base = f"ATTACH '{self.path}'"
+        if self.alias:
+            base += f" AS {self.alias}"
+        options = []
+        if self.type:
+            options.append(f"TYPE {self.type}")
+        if self.read_only:
+            options.append("READ_ONLY")
+        if options:
+            joined = ", ".join(options)
+            base += f" ({joined})"
+        return base
 
 
 @dataclass
@@ -38,12 +71,80 @@ class DuckDBCredentials(Credentials):
     # in this dbt project; defaults to "." (the current working directory)
     external_root: str = "."
 
+    # identify whether to use the default credential provider chain for AWS/GCloud
+    # instead of statically defined environment variables
+    use_credential_provider: Optional[str] = None
+
+    # A list of additional databases that should be attached to the running
+    # DuckDB instance to make them available for use in models; see the
+    # schema for the Attachment dataclass above for what fields it can contain
+    attach: Optional[List[Dict[str, Any]]] = None
+
+    # A list of filesystems to attach to the DuckDB database via the fsspec
+    # interface; see https://duckdb.org/docs/guides/python/filesystems.html
+    #
+    # Each dictionary entry must have a "fs" entry to indicate which
+    # fsspec implementation should be loaded, and then an arbitrary additional
+    # number of key-value pairs that will be passed as arguments to the fsspec
+    # registry method.
+    filesystems: Optional[List[Dict[str, Any]]] = None
+
+    @classmethod
+    def __pre_deserialize__(cls, data: Dict[Any, Any]) -> Dict[Any, Any]:
+        data = super().__pre_deserialize__(data)
+        path = data["path"]
+        if duckdb.__version__ >= "0.7.0":
+            if path == ":memory:":
+                data["database"] = "memory"
+            else:
+                data["database"] = os.path.splitext(os.path.basename(path))[0]
+        return data
+
     @property
     def type(self):
         return "duckdb"
 
     def _connection_keys(self):
         return ("database", "schema", "path")
+
+    def load_settings(self) -> Dict[str, str]:
+        settings = self.settings or {}
+        if self.use_credential_provider:
+            if self.use_credential_provider == "aws":
+                settings.update(_load_aws_credentials(ttl=_get_ttl_hash()))
+            else:
+                raise ValueError(
+                    "Unsupported value for use_credential_provider: "
+                    + self.use_credential_provider
+                )
+        return settings
+
+
+def _get_ttl_hash(seconds=300):
+    """Return the same value withing `seconds` time period"""
+    return round(time.time() / seconds)
+
+
+@lru_cache()
+def _load_aws_credentials(ttl=None) -> Dict[str, Any]:
+    del ttl  # make mypy happy
+    import boto3.session
+
+    session = boto3.session.Session()
+
+    # use STS to verify that the credentials are valid; we will
+    # raise a helpful error here if they are not
+    sts = session.client("sts")
+    sts.get_caller_identity()
+
+    # now extract/return them
+    aws_creds = session.get_credentials().get_frozen_credentials()
+    return {
+        "s3_access_key_id": aws_creds.access_key,
+        "s3_secret_access_key": aws_creds.secret_key,
+        "s3_session_token": aws_creds.token,
+        "s3_region": session.region_name,
+    }
 
 
 class DuckDBCursorWrapper:
@@ -61,7 +162,7 @@ class DuckDBCursorWrapper:
             else:
                 return self._cursor.execute(sql, bindings)
         except RuntimeError as e:
-            raise dbt.exceptions.RuntimeException(str(e))
+            raise dbt.exceptions.DbtRuntimeError(str(e))
 
 
 class DuckDBConnectionWrapper:
@@ -72,7 +173,7 @@ class DuckDBConnectionWrapper:
         cursor = conn.cursor()
         for ext in credentials.extensions or []:
             cursor.execute(f"LOAD '{ext}'")
-        for key, value in (credentials.settings or {}).items():
+        for key, value in credentials.load_settings().items():
             # Okay to set these as strings because DuckDB will cast them
             # to the correct type
             cursor.execute(f"SET {key} = '{value}'")
@@ -111,6 +212,22 @@ class DuckDBConnectionManager(SQLConnectionManager):
                         for extension in credentials.extensions:
                             cls.CONN.execute(f"INSTALL '{extension}'")
 
+                    # Attach any fsspec filesystems on the database
+                    if credentials.filesystems:
+                        import fsspec
+
+                        for spec in credentials.filesystems:
+                            curr = spec.copy()
+                            fsimpl = curr.pop("fs")
+                            fs = fsspec.filesystem(fsimpl, **curr)
+                            cls.CONN.register_filesystem(fs)
+
+                    # attach any databases that we will be using
+                    if credentials.attach:
+                        for entry in credentials.attach:
+                            attachment = Attachment(**entry)
+                            cls.CONN.execute(attachment.to_sql())
+
                 connection.handle = DuckDBConnectionWrapper(cls.CONN.cursor(), credentials)
                 connection.state = ConnectionState.OPEN
                 cls.CONN_COUNT += 1
@@ -123,7 +240,7 @@ class DuckDBConnectionManager(SQLConnectionManager):
                 connection.handle = None
                 connection.state = ConnectionState.FAIL
 
-                raise dbt.exceptions.FailedToConnectException(str(e))
+                raise dbt.exceptions.FailedToConnectError(str(e))
             return connection
 
     @classmethod
@@ -151,14 +268,14 @@ class DuckDBConnectionManager(SQLConnectionManager):
     def exception_handler(self, sql: str, connection_name="master"):
         try:
             yield
-        except dbt.exceptions.RuntimeException:
+        except dbt.exceptions.DbtRuntimeError:
             raise
         except RuntimeError as e:
             logger.debug("duckdb error: {}".format(str(e)))
         except Exception as exc:
             logger.debug("Error running SQL: {}".format(sql))
             logger.debug("Rolling back transaction.")
-            raise dbt.exceptions.RuntimeException(str(exc)) from exc
+            raise dbt.exceptions.DbtRuntimeError(str(exc)) from exc
 
     @classmethod
     def get_credentials(cls, credentials):
