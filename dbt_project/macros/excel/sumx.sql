@@ -1,5 +1,5 @@
 {#
-Calculates the average (arithmetic mean) of a set of expressions evaluated over a table.
+Returns the sum of an expression evaluated for each row in a table.
 
 Example:
 
@@ -11,22 +11,19 @@ Example:
     | 1        | 20     |
     | 3        | 5      |
 
-    select {{ averagex('example') }}
-
+    select {{ sumx('Orders', 'Quantity * Sales') }}
     
     Output:
-
-    18.33
-
+    55
 
 Arguments:
     table: The table containing the rows for which the expression will be evaluated, required.
     expression: The expression to be evaluated for each row of the table, required.
 #}
 
-{% macro averagex(table, expression) %}
+{% macro sumx(table, expression) %}
     (
-        select avg({{ expression }})
+        select sum({{ expression }})
         from {{ table }}
     )
 {% endmacro %}
