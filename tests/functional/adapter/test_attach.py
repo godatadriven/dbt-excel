@@ -47,7 +47,7 @@ class TestAttachedDatabase:
             "test": {
                 "outputs": {
                     "dev": {
-                        "type": "duckdb",
+                        "type": "excel",
                         "path": ":memory:",
                         "attach": [{"path": "/tmp/attach_test.duckdb"}],
                     }
