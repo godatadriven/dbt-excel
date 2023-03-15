@@ -135,6 +135,11 @@ jobs:
       with:
         python-version: 3.9
 
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install twine
+
     - name: Get version
       id: get_version
       run: echo ::set-output name=VERSION::$(python setup.py --version)
