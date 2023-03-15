@@ -12,7 +12,7 @@ from dbt.contracts.graph.nodes import SourceDefinition
 
 
 @dataclass(frozen=True, eq=False, repr=False)
-class DuckDBRelation(BaseRelation):
+class ExcelRelation(BaseRelation):
     external_location: Optional[str] = None
 
     @classmethod
