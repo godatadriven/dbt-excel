@@ -2,5 +2,5 @@ dbt_excel:
   target: dev
   outputs:
    dev:
-     type: duckdb
+     type: excel
      path: /tmp/dbt.duckdb
