@@ -85,6 +85,12 @@ class DuckDBAdapter(SQLAdapter):
     def use_database(self) -> bool:
         return duckdb.__version__ >= "0.7.0"
 
+    @available
+    def output_excel(self, location):
+        import pandas as pd
+
+        pd.read_parquet(location + ".parquet").to_excel(location)
+
     def valid_incremental_strategies(self) -> Sequence[str]:
         """DuckDB does not currently support MERGE statement."""
         return ["append", "delete+insert"]

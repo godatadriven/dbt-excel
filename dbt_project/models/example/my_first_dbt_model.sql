@@ -7,7 +7,7 @@
     Try changing "table" to "view" below
 */
 
-{{ config(materialized='table') }}
+{{ config(materialized='external', location='./first_model.xlsx', format="xlsx") }}
 
 with source_data as (
 
