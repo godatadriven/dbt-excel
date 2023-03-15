@@ -1,0 +1,152 @@
+name: CI pipeline
+
+on:
+  pull_request:
+  push:
+    branches:
+    - main
+    tags:
+    - '*'
+  workflow_dispatch:
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v2
+
+     - name: Set up Python 3.9
+       uses: actions/setup-python@v2
+       with:
+         python-version: 3.9
+
+     - name: Install pre-commit
+       shell: bash
+       run: |
+         python -m pip install --upgrade pip
+         python -m pip install pre-commit
+
+     - name: Run pre-commit hooks
+       shell: bash
+       run: pre-commit run --all-file
+
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+        - "3.7"
+        - "3.8"
+        - "3.9"
+        - "3.10"
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install libsasl2-dev
+        python -m pip install --upgrade pip
+        python -m pip install tox
+
+    - name: Unit tests with tox
+      run: tox -e unit
+
+    - name: Functional tests with tox
+      run: tox -e functional
+
+  test-and-build-release:
+    if: contains(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    needs:
+    - tests
+    - "pre-commit"
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install setuptools wheel twine check-wheel-contents
+
+    - name: Test release
+      run: |
+        python setup.py sdist bdist_wheel
+        pip install dist/dbt-excel-*.tar.gz
+        pip install dist/dbt_excel-*-py3-none-any.whl
+        twine check dist/dbt_excel-*-py3-none-any.whl dist/dbt-excel-*.tar.gz
+        check-wheel-contents dist/*.whl --ignore W002,W007,W008
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: dist/
+
+  github-release:
+    runs-on: ubuntu-latest
+    needs: test-and-build-release
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Get version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(python setup.py --version)
+
+    - name: Find release type
+      id: get_release_type
+      env:
+        IS_PRERELEASE: ${{ contains(env.version_number, 'rc') ||  contains(env.version_number, 'b') }}
+      run: echo ::set-output name=isPrerelease::$IS_PRERELEASE
+
+    - name: Create GitHub release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.VERSION }}
+        release_name: dbt-excel ${{ steps.get_version.outputs.VERSION }}
+        prerelease: ${{ steps.get_release_type.outputs.IS_PRERELEASE }}
+        body: ${{ github.event.head_commit.message }}
+
+  pypi-release:
+    runs-on: ubuntu-latest
+    needs: test-and-build-release
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Get version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(python setup.py --version)
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: dist
+        path: dist/
+
+    - name: Release to pypi
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        twine upload --skip-existing --non-interactive dist/dbt_excel-${{ steps.get_version.outputs.VERSION }}-py3-none-any.whl dist/dbt-excel-${{ steps.get_version.outputs.VERSION }}.tar.gz
