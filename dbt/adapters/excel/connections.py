@@ -102,7 +102,7 @@ class ExcelCredentials(Credentials):
 
     @property
     def type(self):
-        return "duckdb"
+        return "excel"
 
     def _connection_keys(self):
         return ("database", "schema", "path")
@@ -187,7 +187,7 @@ class ExcelConnectionWrapper:
 
 
 class ExcelConnectionManager(SQLConnectionManager):
-    TYPE = "duckdb"
+    TYPE = "excel"
     LOCK = threading.RLock()
     CONN = None
     CONN_COUNT = 0
