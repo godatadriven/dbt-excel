@@ -8,4 +8,5 @@ Plugin = AdapterPlugin(
     adapter=ExcelAdapter,  # type: ignore
     credentials=ExcelCredentials,
     include_path=excel.PACKAGE_PATH,
+    dependencies=["duckdb"],
 )
