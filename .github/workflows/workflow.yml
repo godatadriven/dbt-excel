@@ -62,7 +62,7 @@ jobs:
       run: tox -e functional
 
   test-and-build-release:
-    # if: contains(github.ref, 'refs/tags/')
+    if: contains(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     needs:
     - tests
