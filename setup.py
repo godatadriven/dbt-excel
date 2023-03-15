@@ -38,7 +38,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "dbt-duckdb~=1.4.0",
-        "pandas~=1.5.0",
+        "pandas>=1.0.0,<2.0.0",
     ],
     extras_require={
         "glue": ["boto3", "mypy-boto3-glue"],
