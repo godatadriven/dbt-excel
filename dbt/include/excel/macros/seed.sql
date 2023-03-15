@@ -1,13 +1,13 @@
 
-{% macro duckdb__get_binding_char() %}
+{% macro excel__get_binding_char() %}
   {{ return('?') }}
 {% endmacro %}
 
-{% macro duckdb__get_batch_size() %}
+{% macro excel__get_batch_size() %}
   {{ return(10000) }}
 {% endmacro %}
 
-{% macro duckdb__load_csv_rows(model, agate_table) %}
+{% macro excel__load_csv_rows(model, agate_table) %}
     {% set batch_size = get_batch_size() %}
     {% set agate_table = adapter.convert_datetimes_to_strs(agate_table) %}
     {% set cols_sql = get_seed_column_quoted_csv(model, agate_table.column_names) %}

@@ -1,4 +1,4 @@
-{% macro duckdb__any_value(expression) -%}
+{% macro excel__any_value(expression) -%}
 
     arbitrary({{ expression }})
 

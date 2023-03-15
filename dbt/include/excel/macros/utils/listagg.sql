@@ -1,4 +1,4 @@
-{% macro duckdb__listagg(measure, delimiter_text, order_by_clause, limit_num) -%}
+{% macro excel__listagg(measure, delimiter_text, order_by_clause, limit_num) -%}
     {% if limit_num -%}
     list_aggr(
         (array_agg(

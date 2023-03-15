@@ -1,4 +1,4 @@
-{% materialization external, adapter="duckdb", supported_languages=['sql', 'python'] %}
+{% materialization external, adapter="excel", supported_languages=['sql', 'python'] %}
 
   {%- set format = render(config.get('format', default='parquet')) -%}
   {%- set location = render(config.get('location', default=external_location(this, format))) -%}
