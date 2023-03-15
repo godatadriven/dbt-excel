@@ -3,7 +3,7 @@ from unittest.mock import call
 import pytest
 
 from dbt.adapters.base.column import Column
-from dbt.adapters.duckdb.glue import create_or_update_table
+from dbt.adapters.excel.glue import create_or_update_table
 
 
 class TestGlue:
@@ -51,7 +51,7 @@ class TestGlue:
         ]
 
     def test_create_glue_table(self, mocker, columns):
-        boto3 = mocker.patch("dbt.adapters.duckdb.glue.boto3.client")
+        boto3 = mocker.patch("dbt.adapters.excel.glue.boto3.client")
         boto3.return_value.get_table.return_value = None
         create_or_update_table(
             database="test",
@@ -132,7 +132,7 @@ class TestGlue:
         )
 
     def test_update_glue_table(self, mocker, columns):
-        boto3 = mocker.patch("dbt.adapters.duckdb.glue.boto3.client")
+        boto3 = mocker.patch("dbt.adapters.excel.glue.boto3.client")
         boto3.return_value.get_table.return_value = {
             "Table": {
                 "Name": "test",
@@ -235,7 +235,7 @@ class TestGlue:
         )
 
     def test_without_update_glue_table(self, mocker, columns):
-        boto3 = mocker.patch("dbt.adapters.duckdb.glue.boto3.client")
+        boto3 = mocker.patch("dbt.adapters.excel.glue.boto3.client")
         boto3.return_value.get_table.return_value = {
             "Table": {
                 "Name": "test",

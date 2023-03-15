@@ -2,11 +2,11 @@ import unittest
 from unittest import mock
 
 import dbt.flags as flags
-from dbt.adapters.duckdb import DuckDBAdapter
+from dbt.adapters.excel import ExcelAdapter
 from tests.unit.utils import config_from_parts_or_dicts, mock_connection
 
 
-class TestDuckDBAdapter(unittest.TestCase):
+class TestExcelAdapter(unittest.TestCase):
     def setUp(self):
         pass
         flags.STRICT_MODE = True
@@ -14,7 +14,7 @@ class TestDuckDBAdapter(unittest.TestCase):
         profile_cfg = {
             "outputs": {
                 "test": {
-                    "type": "duckdb",
+                    "type": "excel",
                     "path": ":memory:",
                 }
             },
@@ -39,10 +39,10 @@ class TestDuckDBAdapter(unittest.TestCase):
     @property
     def adapter(self):
         if self._adapter is None:
-            self._adapter = DuckDBAdapter(self.config)
+            self._adapter = ExcelAdapter(self.config)
         return self._adapter
 
-    @mock.patch("dbt.adapters.duckdb.connections.duckdb")
+    @mock.patch("dbt.adapters.excel.connections.duckdb")
     def test_acquire_connection(self, connector):
         connection = self.adapter.acquire_connection("dummy")
 
