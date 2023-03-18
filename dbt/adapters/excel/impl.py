@@ -11,18 +11,18 @@ import duckdb
 from dbt.adapters.base import BaseRelation
 from dbt.adapters.base.column import Column
 from dbt.adapters.base.meta import available
-from dbt.adapters.duckdb.connections import DuckDBConnectionManager
-from dbt.adapters.duckdb.glue import create_or_update_table
-from dbt.adapters.duckdb.relation import DuckDBRelation
+from dbt.adapters.excel.connections import ExcelConnectionManager
+from dbt.adapters.excel.glue import create_or_update_table
+from dbt.adapters.excel.relation import ExcelRelation
 from dbt.adapters.sql import SQLAdapter
 from dbt.contracts.connection import AdapterResponse
 from dbt.exceptions import DbtInternalError
 from dbt.exceptions import DbtRuntimeError
 
 
-class DuckDBAdapter(SQLAdapter):
-    ConnectionManager = DuckDBConnectionManager
-    Relation = DuckDBRelation
+class ExcelAdapter(SQLAdapter):
+    ConnectionManager = ExcelConnectionManager
+    Relation = ExcelRelation
 
     @classmethod
     def date_function(cls) -> str:
@@ -83,7 +83,7 @@ class DuckDBAdapter(SQLAdapter):
 
     @available
     def use_database(self) -> bool:
-        return duckdb.__version__ >= "0.7.0"
+        return duckdb.__version__ >= "0.7.0"  # type: ignore
 
     @available
     def output_excel(self, location):

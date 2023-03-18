@@ -1,4 +1,4 @@
-{% materialization incremental, adapter="duckdb", supported_languages=['sql', 'python'] -%}
+{% materialization incremental, adapter="excel", supported_languages=['sql', 'python'] -%}
 
   {%- set language = model['language'] -%}
 

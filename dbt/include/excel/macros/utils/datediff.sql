@@ -1,4 +1,4 @@
-{% macro duckdb__datediff(first_date, second_date, datepart) -%}
+{% macro excel__datediff(first_date, second_date, datepart) -%}
 
     {% if datepart == 'year' %}
         (date_part('year', ({{second_date}})::date) - date_part('year', ({{first_date}})::date))

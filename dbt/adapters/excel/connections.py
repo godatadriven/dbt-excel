@@ -53,7 +53,7 @@ class Attachment:
 
 
 @dataclass
-class DuckDBCredentials(Credentials):
+class ExcelCredentials(Credentials):
     database: str = "main"
     schema: str = "main"
     path: str = ":memory:"
@@ -93,7 +93,7 @@ class DuckDBCredentials(Credentials):
     def __pre_deserialize__(cls, data: Dict[Any, Any]) -> Dict[Any, Any]:
         data = super().__pre_deserialize__(data)
         path = data["path"]
-        if duckdb.__version__ >= "0.7.0":
+        if duckdb.__version__ >= "0.7.0":  # type: ignore
             if path == ":memory:":
                 data["database"] = "memory"
             else:
@@ -102,7 +102,7 @@ class DuckDBCredentials(Credentials):
 
     @property
     def type(self):
-        return "duckdb"
+        return "excel"
 
     def _connection_keys(self):
         return ("database", "schema", "path")
@@ -147,7 +147,7 @@ def _load_aws_credentials(ttl=None) -> Dict[str, Any]:
     }
 
 
-class DuckDBCursorWrapper:
+class ExcelCursorWrapper:
     def __init__(self, cursor):
         self._cursor = cursor
 
@@ -165,7 +165,7 @@ class DuckDBCursorWrapper:
             raise dbt.exceptions.DbtRuntimeError(str(e))
 
 
-class DuckDBConnectionWrapper:
+class ExcelConnectionWrapper:
     def __init__(self, conn, credentials):
         self._conn = conn
 
@@ -177,7 +177,7 @@ class DuckDBConnectionWrapper:
             # Okay to set these as strings because DuckDB will cast them
             # to the correct type
             cursor.execute(f"SET {key} = '{value}'")
-        self._cursor = DuckDBCursorWrapper(cursor)
+        self._cursor = ExcelCursorWrapper(cursor)
 
     def __getattr__(self, name):
         return getattr(self._conn, name)
@@ -186,8 +186,8 @@ class DuckDBConnectionWrapper:
         return self._cursor
 
 
-class DuckDBConnectionManager(SQLConnectionManager):
-    TYPE = "duckdb"
+class ExcelConnectionManager(SQLConnectionManager):
+    TYPE = "excel"
     LOCK = threading.RLock()
     CONN = None
     CONN_COUNT = 0
@@ -228,7 +228,7 @@ class DuckDBConnectionManager(SQLConnectionManager):
                             attachment = Attachment(**entry)
                             cls.CONN.execute(attachment.to_sql())
 
-                connection.handle = DuckDBConnectionWrapper(cls.CONN.cursor(), credentials)
+                connection.handle = ExcelConnectionWrapper(cls.CONN.cursor(), credentials)
                 connection.state = ConnectionState.OPEN
                 cls.CONN_COUNT += 1
 
@@ -295,4 +295,4 @@ class DuckDBConnectionManager(SQLConnectionManager):
                 cls.CONN = None
 
 
-atexit.register(DuckDBConnectionManager.close_all_connections)
+atexit.register(ExcelConnectionManager.close_all_connections)

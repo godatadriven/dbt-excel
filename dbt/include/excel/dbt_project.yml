@@ -1,5 +1,5 @@
 
-name: dbt_duckdb
+name: dbt_excel
 version: 1.0
 config-version: 2
 

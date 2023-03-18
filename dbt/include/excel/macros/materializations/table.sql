@@ -1,24 +1,13 @@
-{% materialization external, adapter="duckdb", supported_languages=['sql', 'python'] %}
+{% materialization table, adapter="excel", supported_languages=['sql', 'python'] %}
 
-  {%- set format = render(config.get('format', default='parquet')) -%}
-  {%- set location = render(config.get('location', default=external_location(this, format))) -%}
-  {%- set delimiter = render(config.get('delimiter', default=',')) -%}
-  {%- set glue_register = config.get('glue_register', default=false) -%}
-  {%- set glue_database = render(config.get('glue_database', default='default')) -%}
-
-  -- set language - python or sql
   {%- set language = model['language'] -%}
 
-  {%- set target_relation = this.incorporate(type='view') %}
-
-  -- Continue as normal materialization
   {%- set existing_relation = load_cached_relation(this) -%}
-  {%- set temp_relation =  make_intermediate_relation(this.incorporate(type='table'), suffix='__dbt_tmp') -%}
-  {%- set intermediate_relation =  make_intermediate_relation(target_relation, suffix='__dbt_int') -%}
+  {%- set target_relation = this.incorporate(type='table') %}
+  {%- set intermediate_relation =  make_intermediate_relation(target_relation) -%}
   -- the intermediate_relation should not already exist in the database; get_relation
   -- will return None in that case. Otherwise, we get a relation that we can drop
   -- later, before we try to use this name for the current operation
-  {%- set preexisting_temp_relation = load_cached_relation(temp_relation) -%}
   {%- set preexisting_intermediate_relation = load_cached_relation(intermediate_relation) -%}
   /*
       See ../view/view.sql for more information about this relation.
@@ -32,7 +21,6 @@
 
   -- drop the temp relations if they exist already in the database
   {{ drop_relation_if_exists(preexisting_intermediate_relation) }}
-  {{ drop_relation_if_exists(preexisting_temp_relation) }}
   {{ drop_relation_if_exists(preexisting_backup_relation) }}
 
   {{ run_hooks(pre_hooks, inside_transaction=False) }}
@@ -41,20 +29,8 @@
   {{ run_hooks(pre_hooks, inside_transaction=True) }}
 
   -- build model
-  {% call statement('create_table', language=language) -%}
-    {{- create_table_as(False, temp_relation, compiled_code, language) }}
-  {%- endcall %}
-
-  -- write an temp relation into file
-  {{ write_to_file(temp_relation, location, format, delimiter) }}
-  -- create a view on top of the location
-  {% if format == 'xlsx' %}
-	  {% set location = location + '.parquet' %}
-  {% endif %}
-  {% call statement('main', language='sql') -%}
-    create or replace view {{ intermediate_relation.include(database=adapter.use_database()) }} as (
-        select * from '{{ location }}'
-    );
+  {% call statement('main', language=language) -%}
+    {{- create_table_as(False, intermediate_relation, compiled_code, language) }}
   {%- endcall %}
 
   -- cleanup
@@ -63,6 +39,8 @@
   {% endif %}
 
   {{ adapter.rename_relation(intermediate_relation, target_relation) }}
+
+  {% do create_indexes(target_relation) %}
 
   {{ run_hooks(post_hooks, inside_transaction=True) }}
 
@@ -76,13 +54,8 @@
 
   -- finally, drop the existing/backup relation after the commit
   {{ drop_relation_if_exists(backup_relation) }}
-  {{ drop_relation_if_exists(temp_relation) }}
-
-  -- register table into glue
-  {% do register_glue_table(glue_register, glue_database, target_relation, location, format) %}
 
   {{ run_hooks(post_hooks, inside_transaction=False) }}
 
   {{ return({'relations': [target_relation]}) }}
-
 {% endmaterialization %}

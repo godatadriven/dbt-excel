@@ -1,5 +1,5 @@
 
-{% macro duckdb__get_catalog(information_schema, schemas) -%}
+{% macro excel__get_catalog(information_schema, schemas) -%}
   {%- call statement('catalog', fetch_result=True) -%}
     select
         '{{ database }}' as table_database,

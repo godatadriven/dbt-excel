@@ -1,7 +1,7 @@
-{% macro duckdb__last_day(date, datepart) -%}
+{% macro excel__last_day(date, datepart) -%}
 
     {%- if datepart == 'quarter' -%}
-    -- duckdb dateadd does not support quarter interval.
+    -- excel dateadd does not support quarter interval.
     cast(
         {{dbt.dateadd('day', '-1',
         dbt.dateadd('month', '3', dbt.date_trunc(datepart, date))

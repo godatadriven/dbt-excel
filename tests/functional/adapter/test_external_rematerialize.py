@@ -1,6 +1,6 @@
 import pytest
 from dbt.tests.util import run_dbt
-from dbt.adapters.duckdb import DuckDBConnectionManager
+from dbt.adapters.excel import ExcelConnectionManager
 
 upstream_model_sql = """
 select range from range(3)
@@ -28,7 +28,7 @@ class TestRematerializeDownstreamExternalModel:
     @pytest.fixture(scope="class")
     def dbt_profile_target(self):
         return {
-            "type": "duckdb",
+            "type": "excel",
             "path": ":memory:",
         }
 
@@ -52,5 +52,5 @@ class TestRematerializeDownstreamExternalModel:
         run_dbt(["run"])
 
         # Force close the :memory: connection
-        DuckDBConnectionManager.close_all_connections()
+        ExcelConnectionManager.close_all_connections()
         run_dbt(["run", "--select", "downstream_model,other_downstream_model"])

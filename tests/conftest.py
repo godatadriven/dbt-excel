@@ -10,7 +10,7 @@ pytest_plugins = ["dbt.tests.fixtures.project"]
 @pytest.fixture(scope="class")
 def dbt_profile_target():
     return {
-        "type": "duckdb",
+        "type": "excel",
         "threads": 1,
         "path": ":memory:",
     }

@@ -16,7 +16,7 @@ class TestFilesystems:
             "test": {
                 "outputs": {
                     "dev": {
-                        "type": "duckdb",
+                        "type": "excel",
                         "path": ":memory:",
                         "filesystems": [
                             {"fs": "github", "org": "jwills", "repo": "nba_monte_carlo"}
