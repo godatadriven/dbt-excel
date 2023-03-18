@@ -1,4 +1,5 @@
 from dbt.adapters.base.meta import available
+from dbt.adapters.duckdb.glue import create_or_update_table
 from dbt.adapters.duckdb.impl import DuckDBAdapter
 from dbt.adapters.excel.connections import ExcelConnectionManager
 from dbt.adapters.excel.relation import ExcelRelation
