@@ -1,8 +1,9 @@
 from unittest import mock
 
 from botocore.credentials import Credentials
+from dbt.adapters.duckdb.connections import Attachment
 
-from dbt.adapters.excel.connections import Attachment, ExcelCredentials
+from dbt.adapters.excel.connections import ExcelCredentials
 
 
 def test_load_basic_settings():
