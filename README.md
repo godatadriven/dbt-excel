@@ -6,20 +6,45 @@ Welcome to dbt-excel, the revolutionary dbt adapter that combines the rigor of d
 
 ![dbt-excel logo](assets/dbt-excel.png)
 
-### **Installation**
-
-To install dbt-excel, run the following command in your terminal:
-
-```bash
-python -m pip install dbt-excel
-```
-
 ### Features
 
 - Integrate Excel with dbt: query data that you didn't know existed, for people who didn't know you existed, all from Excel!
 - Use your favorite Excel functions: VLOOKUP, sheet support, averageif, and more, because life's too short for learning SQL functions.
 - Runs blazingly fast queries thanks to duckdb running in the background, so you can have your cake and eat it too!
 - Monitor your data assets, collaborate on data models, and document your queries, all within Excel. Remember, if it's not in Excel, it's not worth doing!
+
+### **Installation**
+
+To install dbt-excel, just run the following command in your terminal:
+
+```bash
+python -m pip install dbt-excel
+```
+
+
+#### Profile setup
+
+The default profile will create a duckdb file in /tmp, of the custom `excel` type. You can adjust the path if necessary.
+
+```
+dbt_excel:
+  target: dev
+  outputs:
+   dev:
+     type: excel
+     path: /tmp/dbt.duckdb
+
+```
+
+
+### Running your first DBT Excel model
+
+Steps:
+
+1. `cd` into the `dbt_project` directory, then run `dbt run -s my_first_dbt_model --profiles-dir .` this will run the models in the `models/example/my_first_dbt_model.sql` file.
+2. A Excel file exists in `sources/people.xlsx`, which will be read and used by the models. The result will be written to ` first_model.xlsx`.
+3. Boom, you just read from AND wrote to Excel!
+4. Savour this moment, it's precious.
 
 ### Testimonials:
 
@@ -37,3 +62,8 @@ python -m pip install dbt-excel
 **CEO:**
 
 > Companies worldwide are pouring trillions of dollars into digital transformation. But they forget one thing. In the end, all data lives in Excel. Dbt-excel combines the rigour of software engineering from dbt with the flexibility of Excel. True data democratization starts and ends with Excel.
+
+
+### Credits
+
+Big credits to [Josh Wills' excellent DBT Duckdb adapter](https://github.com/jwills/dbt-duckdb) which inspired this project!
