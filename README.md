@@ -48,13 +48,6 @@ Steps:
 
 ### Testimonials:
 
-**Anonymous Analyst:**
-> I used to have impostor syndrome working with DBT. With Excel I know I Excel.
-
-**Anonymous Enterprise Architect:**
->  "If your data does not fit in 1,048,576 rows, you are doing something wrong."
-
-
 **Enterprise Architect:**
 
 > As an Enterprise Architect, I have been involved in countless failed digital transformation projects. They all make the same mistake. They forget one thing: all data lives in Excel. By moving away from enterprise-grade solutions like Excel to complicated stacks based on FivetPython, dbt and XXX, companies neglect their core competence. 1,048,576 rows ought to be enough for anybody. The only digital winners are the companies that build their stack on top of Excel.
@@ -62,6 +55,9 @@ Steps:
 **CEO:**
 
 > Companies worldwide are pouring trillions of dollars into digital transformation. But they forget one thing. In the end, all data lives in Excel. Dbt-excel combines the rigour of software engineering from dbt with the flexibility of Excel. True data democratization starts and ends with Excel.
+
+**Anonymous Analyst:**
+> I used to have impostor syndrome working with DBT. With Excel I know I Excel.
 
 
 ### Credits
