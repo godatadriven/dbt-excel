@@ -15,6 +15,13 @@ Welcome to dbt-excel, the revolutionary dbt adapter that combines the rigor of d
 
 ### **Installation**
 
+Clone this repo to your local machine and change directory:
+
+```bash
+git@github.com:godatadriven/dbt-excel.git
+cd dbt-excel
+```
+
 To install dbt-excel, just run the following command in your terminal:
 
 ```bash
