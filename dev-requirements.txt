@@ -20,6 +20,7 @@ openpyxl
 pip-tools
 pre-commit
 pytest
+pytest-dbt-core
 pytest-dotenv
 pytest-logbook
 pytest-csv
