@@ -1,5 +1,5 @@
-import pathlib
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 from typing import Optional
 from typing import Type
@@ -32,12 +32,9 @@ class ExcelRelation(BaseRelation):
                 identifier=source.identifier,
             )
             if external_location.endswith(".xlsx"):
-                source_location = pathlib.Path(external_location.strip("'"))
-                source_dir = source_location.parents[0]
-                df = pd.read_excel(source_location)
-                filename = source_location.with_suffix(".csv").name
-                csv_location = source_dir / filename
-                df.to_csv(csv_location, index=False)
+                excel_location = Path(external_location.strip("'"))
+                csv_location = excel_location.with_suffix(".csv")
+                pd.read_excel(excel_location).to_csv(csv_location, index=False)
                 external_location = str(csv_location)
             if "(" not in external_location and not external_location.startswith("'"):
                 external_location = f"'{external_location}'"
