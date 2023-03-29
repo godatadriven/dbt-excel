@@ -3,4 +3,4 @@ dbt_excel_project:
   outputs:
    test:
      type: excel
-     path: /tmp/dbt.duckdb
+     path: ":memory:"
