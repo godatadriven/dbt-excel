@@ -1,11 +1,11 @@
 version: 2
 
 sources:
-  - name: "mock_data"
-    meta:
-      external_location: "./sources/people.xlsx"
-    tables:
-      - name: people
+- name: "jaffle_shop"
+  meta:
+    external_location: "./seeds/jaffle_shop.xlsx"
+  tables:
+  - name: raw_customers
 
 models:
   - name: my_first_dbt_model
