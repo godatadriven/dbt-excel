@@ -13,6 +13,14 @@ Welcome to dbt-excel, the revolutionary dbt adapter that combines the rigor of d
 - Runs blazingly fast queries thanks to duckdb running in the background, so you can have your cake and eat it too!
 - Monitor your data assets, collaborate on data models, and document your queries, all within Excel. Remember, if it's not in Excel, it's not worth doing!
 
+### **Installation**
+
+To install dbt-excel, just run the following command in your terminal:
+
+```bash
+python -m pip install dbt-excel
+```
+
 ### **Development Installation**
 
 This section details how to setup a local environment to develop this dbt adapter.
