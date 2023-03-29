@@ -33,8 +33,13 @@ class ExcelRelation(BaseRelation):
             )
             if external_location.endswith(".xlsx"):
                 excel_location = Path(external_location.strip("'"))
-                csv_location = excel_location.with_suffix(".csv")
-                pd.read_excel(excel_location).to_csv(csv_location, index=False)
+                csv_location = (
+                    excel_location.parent / excel_location.stem / source.identifier
+                ).with_suffix(".csv")
+                csv_location.parent.mkdir(exist_ok=True)
+                pd.read_excel(excel_location, sheet_name=source.identifier).to_csv(
+                    csv_location, index=False
+                )
                 external_location = str(csv_location)
             if "(" not in external_location and not external_location.startswith("'"):
                 external_location = f"'{external_location}'"
