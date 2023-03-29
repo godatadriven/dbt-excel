@@ -59,13 +59,19 @@ class TestExternalSources:
 
     def test_external_sources(self, project):
         # abusing the 'seeds' directory a little bit here, but it works
-        seeds_source = pd.DataFrame({"id": [1, 4, 7], "a": [2, 5, 8], "b": [3, 6, 9]})
-        seeds_source.to_excel("seeds/seeds_source.xlsx", index=False)
+        seeds_source = pd.DataFrame(
+            {"id": [1, 4, 7], "a": [2, 5, 8], "b": [3, 6, 9]}
+        )
+        seeds_source.to_excel(
+            "seeds/seeds_source.xlsx", sheet_name="seeds_source", index=False
+        )
         seeds_other_source_table = pd.DataFrame(
             {"id": [1, 4, 7], "c": [2, 5, 8], "d": [3, 6, 9]}
         )
         seeds_other_source_table.to_excel(
-            "seeds/seeds_other_source_table.xlsx", index=False
+            "seeds/seeds_other_source_table.xlsx",
+            sheet_name="seeds_other_source_table",
+            index=False,
         )
 
         results = self.run_dbt_with_vars(project, ["run"])
