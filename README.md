@@ -13,21 +13,26 @@ Welcome to dbt-excel, the revolutionary dbt adapter that combines the rigor of d
 - Runs blazingly fast queries thanks to duckdb running in the background, so you can have your cake and eat it too!
 - Monitor your data assets, collaborate on data models, and document your queries, all within Excel. Remember, if it's not in Excel, it's not worth doing!
 
-### **Installation**
+### **Development Installation**
 
-Clone this repo to your local machine and change directory:
+This section details how to setup a local environment to develop this dbt adapter.
 
-```bash
-git@github.com:godatadriven/dbt-excel.git
-cd dbt-excel
-```
+1. Clone this repo to your local machine and change directory:
+    ```bash
+    git clone git@github.com:godatadriven/dbt-excel.git
+    cd dbt-excel
+    ```
 
-To install dbt-excel, just run the following command in your terminal:
+1. Create a virtual environment:
+    ```bash
+    python -m virtualenv .venv
+    source .venv/bin/activate
+    ```
 
-```bash
-python -m pip install dbt-excel
-```
-
+1. To install dbt-excel in editable mode, run the following command in your terminal:
+    ```bash
+    python -m pip install -e .
+    ```
 
 #### Profile setup
 
