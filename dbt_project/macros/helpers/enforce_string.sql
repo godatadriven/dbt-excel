@@ -1,4 +1,4 @@
-{% macro enforce_string(column) %} 
+{% macro enforce_string(column) %}
 
 lower(cast({{ column }} as text))
 

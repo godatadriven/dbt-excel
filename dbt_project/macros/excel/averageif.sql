@@ -3,7 +3,7 @@ Calculates the average of values in a range based on a true or false condition.
 
 Example:
 
-    Input: 'B2:B4', 'Product A', 'A2:A4' 
+    Input: 'B2:B4', 'Product A', 'A2:A4'
 
     | Quantity |  Product  |
     |----------|-----------|
@@ -12,7 +12,7 @@ Example:
     | 3        | Product B |
 
     select {{ averageif('B2:B4', 'Product A', 'A2:A4') }}
-    
+
     Output:
     3
 

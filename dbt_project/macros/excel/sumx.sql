@@ -12,7 +12,7 @@ Example:
     | 3        | 5      |
 
     select {{ sumx('Orders', 'Quantity * Sales') }}
-    
+
     Output:
     55
 

@@ -12,7 +12,7 @@ Example:
     | 3        | 5      |
 
     select {{ averagex('Orders', 'Quantity * Sales') }}
-    
+
     Output:
     18.33
 

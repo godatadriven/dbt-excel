@@ -17,12 +17,12 @@ Example:
     select *
     from public.test
     {{ remove_partial_duplicates('size') }}
-    
+
     Output:
 
-    | size | color | 
+    | size | color |
     |------+-------+
-    | S    | red   | 
+    | S    | red   |
     | M    | red   |
 
 Arguments:
@@ -32,4 +32,3 @@ Arguments:
 {% macro remove_partial_duplicates(column_name) %}
 qualify row_number() over (partition by {{ column_name }}) = 1
 {% endmacro %}
-
