@@ -1,3 +1,13 @@
+{{
+
+config(
+  materialized='external',
+  location='./customers.xlsx',
+  format="xlsx"
+)
+
+}}
+
 with customers as (
 
     select * from {{ ref('stg_customers') }}
