@@ -1,0 +1,6 @@
+name: dbt_excel_project
+profile: dbt_excel_project
+version: '1.0.0'
+config-version: 2
+require-dbt-version: [">=1.0.0", "<2.0.0"]
+macro-paths: ["../../dbt/include/excel/macros"]
