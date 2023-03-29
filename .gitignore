@@ -77,3 +77,7 @@ target/
 # Vim
 *.sw*
 .DS_Store
+
+# Example dbt project
+dbt_project/dbt_excel.duckdb
+dbt_project/sources/*/*.csv
