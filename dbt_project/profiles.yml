@@ -3,4 +3,4 @@ dbt_excel:
   outputs:
    dev:
      type: excel
-     path: /tmp/dbt.duckdb
+     path: dbt_excel.duckdb

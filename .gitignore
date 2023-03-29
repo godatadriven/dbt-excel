@@ -81,3 +81,4 @@ target/
 # Example dbt project
 dbt_project/dbt_excel.duckdb
 dbt_project/sources/*/*.csv
+dbt_project/sources/~*.xlsx
