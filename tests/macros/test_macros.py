@@ -1,4 +1,5 @@
 import pytest
+import duckdb
 from dbt.clients.jinja import MacroGenerator
 
 
@@ -7,7 +8,8 @@ from dbt.clients.jinja import MacroGenerator
     ["macro.dbt_excel.enforce_string"],
     indirect=True,
 )
-def test_enforce_string(macro_generator: MacroGenerator) -> None:
+def test_enforce_string(macro_generator: MacroGenerator, config) -> None:
     """Always return a lowercase string."""
-    out = macro_generator(1)
-    assert out == "1"
+    macro = macro_generator(1)
+    first_record = duckdb.sql(f"SELECT {macro}").fetchone()
+    assert first_record[0] == "1"
