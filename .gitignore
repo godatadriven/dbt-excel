@@ -79,6 +79,6 @@ target/
 .DS_Store
 
 # Example dbt project
-dbt_project/dbt_excel.duckdb
-dbt_project/sources/*/*.csv
-dbt_project/sources/~*.xlsx
+docs/jaffle_shop_with_dbt_excel/dbt_excel.duckdb
+docs/jaffle_shop_with_dbt_excel/sources/*/*.csv
+docs/jaffle_shop_with_dbt_excel/sources/~*.xlsx

@@ -28,6 +28,6 @@ models:
   - name: payment_method
     tests:
     - accepted_values:
-        values: ['credit_card', 'coupon', 'bank_transfer']
+        values: ['credit_card', 'coupon', 'bank_transfer', 'gift_card']
         config:
           severity: warn
