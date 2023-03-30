@@ -22,7 +22,7 @@ def _dbt_excel_version():
         return match.group(1)
 
 
-package_version = _dbt_excel_version() + "rc1"
+package_version = _dbt_excel_version() + "rc2"
 description = """The excel adapter plugin for dbt (data build tool)"""
 
 setup(
