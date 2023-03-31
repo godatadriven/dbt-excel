@@ -44,6 +44,6 @@ setup(
     ],
     extras_require={
         "glue": ["boto3", "mypy-boto3-glue"],
-        "test": ["pytest"],
+        "test": ["pytest", "dbt-tests-adapter"],
     },
 )
