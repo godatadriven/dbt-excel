@@ -41,6 +41,7 @@ setup(
         "pandas>=1.0.0,<2.0.0",
         "pyarrow>=9.0.0",
         "openpyxl>=3.0.0,<4.0.0",
+        "xlwt>=1.3.0",
     ],
     extras_require={
         "glue": ["boto3", "mypy-boto3-glue"],
