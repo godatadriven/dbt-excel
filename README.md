@@ -21,6 +21,26 @@ To install dbt-excel, just run the following command in your terminal:
 python -m pip install dbt-excel
 ```
 
+### **Development Installation**
+
+This section details how to setup a local environment to develop this dbt adapter.
+
+1. Clone this repo to your local machine and change directory:
+    ```bash
+    git clone git@github.com:godatadriven/dbt-excel.git
+    cd dbt-excel
+    ```
+
+1. Create a virtual environment:
+    ```bash
+    python -m virtualenv .venv
+    source .venv/bin/activate
+    ```
+
+1. To install dbt-excel in editable mode, run the following command in your terminal:
+    ```bash
+    python -m pip install -e .
+    ```
 
 #### Profile setup
 
