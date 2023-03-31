@@ -39,8 +39,11 @@ setup(
     install_requires=[
         "dbt-duckdb~=1.4.0",
         "pandas>=1.0.0,<2.0.0",
+        "pyarrow>=9.0.0",
+        "openpyxl>=3.0.0,<4.0.0",
     ],
     extras_require={
         "glue": ["boto3", "mypy-boto3-glue"],
+        "test": ["pytest"],
     },
 )
