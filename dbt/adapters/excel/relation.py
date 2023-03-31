@@ -37,7 +37,7 @@ class ExcelRelation(BaseRelation):
             ext_location = ext_location.format(
                 schema=source.schema, name=source.name, identifier=source.identifier
             )
-            if ".xlsx" in ext_location:
+            if ext_location.endswith((".xlsx", ".xls")):
                 source_location = pathlib.Path(ext_location.strip("'"))
                 source_dir = source_location.parents[0]
                 df = pd.read_excel(source_location)
