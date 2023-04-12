@@ -77,3 +77,9 @@ target/
 # Vim
 *.sw*
 .DS_Store
+
+# Example dbt project
+docs/jaffle_shop_with_dbt_excel/dbt_excel.duckdb
+docs/jaffle_shop_with_dbt_excel/sources/*/*.csv
+docs/jaffle_shop_with_dbt_excel/sources/~*.xlsx
+docs/jaffle_shop_with_dbt_excel/.user.yml

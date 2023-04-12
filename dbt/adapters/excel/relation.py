@@ -1,5 +1,5 @@
-import pathlib
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 from typing import Optional
 from typing import Type
@@ -18,39 +18,32 @@ class ExcelRelation(BaseRelation):
     @classmethod
     def create_from_source(cls: Type[Self], source: SourceDefinition, **kwargs: Any) -> Self:
 
-        # Some special handling here to allow sources that are external files to be specified
-        # via a `external_location` meta field. If the source's meta field is used, we include
-        # some logic to allow basic templating of the external location based on the individual
-        # name or identifier for the table itself to cut down on boilerplate.
-        ext_location = None
         if "external_location" in source.meta:
-            ext_location = source.meta["external_location"]
+            external_location = source.meta["external_location"]
         elif "external_location" in source.source_meta:
-            # Use str.format here to allow for some basic templating outside of Jinja
-            ext_location = source.source_meta["external_location"]
+            external_location = source.source_meta["external_location"]
+        else:
+            external_location = None
 
-        if ext_location:
-            # Call str.format with the schema, name and identifier for the source so that they
-            # can be injected into the string; this helps reduce boilerplate when all
-            # of the tables in the source have a similar location based on their name
-            # and/or identifier.
-            ext_location = ext_location.format(
-                schema=source.schema, name=source.name, identifier=source.identifier
+        if external_location is not None:
+            external_location = external_location.format(
+                schema=source.schema,
+                name=source.name,
+                identifier=source.identifier,
             )
-            if ".xlsx" in ext_location:
-                source_location = pathlib.Path(ext_location.strip("'"))
-                source_dir = source_location.parents[0]
-                df = pd.read_excel(source_location)
-                filename = source_location.with_suffix(".csv").name
-                csv_path = source_dir / filename
-                df.to_csv(csv_path, index=False)
-                kwargs["external_location"] = f"'{csv_path}'"
-                return super().create_from_source(source, **kwargs)  # type: ignore
-
-            # If it's a function call or already has single quotes, don't add them
-            if "(" not in ext_location and not ext_location.startswith("'"):
-                ext_location = f"'{ext_location}'"
-            kwargs["external_location"] = ext_location
+            if external_location.endswith(".xlsx"):
+                excel_location = Path(external_location.strip("'"))
+                csv_location = (
+                    excel_location.parent / excel_location.stem / source.identifier
+                ).with_suffix(".csv")
+                csv_location.parent.mkdir(exist_ok=True)
+                pd.read_excel(excel_location, sheet_name=source.identifier).to_csv(
+                    csv_location, index=False
+                )
+                external_location = str(csv_location)
+            if "(" not in external_location and not external_location.startswith("'"):
+                external_location = f"'{external_location}'"
+            kwargs["external_location"] = external_location
 
         return super().create_from_source(source, **kwargs)  # type: ignore
 
