@@ -37,7 +37,7 @@ setup(
     packages=find_namespace_packages(include=["dbt", "dbt.*"]),
     include_package_data=True,
     install_requires=[
-        "dbt-duckdb~=1.4.0",
+        "dbt-duckdb>=1.4,<1.6",
         "pandas>=1.0.0,<3.0.0",
         "pyarrow>=9.0.0",
         "openpyxl>=3.0.0,<4.0.0",
