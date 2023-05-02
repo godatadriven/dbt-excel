@@ -11,7 +11,7 @@
 
   {% elif format == 'xlsx' %}
     {% set copy_to %}
-      copy {{ relation }} to '{{ location }}.parquet' (FORMAT 'parquet');
+      copy {{ relation }} to '{{ location.replace(".xlsx", ".parquet") }}' (FORMAT 'parquet');
     {% endset %}
 
   {% else %}

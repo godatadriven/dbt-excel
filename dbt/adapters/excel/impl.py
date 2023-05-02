@@ -12,4 +12,4 @@ class ExcelAdapter(DuckDBAdapter):
     def output_excel(self, location):
         import pandas as pd
 
-        pd.read_parquet(location + ".parquet").to_excel(location)
+        pd.read_parquet(location.replace(".xlsx", ".parquet")).to_excel(location)

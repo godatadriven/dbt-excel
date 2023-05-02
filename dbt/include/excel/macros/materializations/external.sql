@@ -1,10 +1,20 @@
 {% materialization external, adapter="excel", supported_languages=['sql', 'python'] %}
 
   {%- set format = render(config.get('format', default='parquet')) -%}
-  {%- set location = render(config.get('location', default=external_location(this, format))) -%}
   {%- set delimiter = render(config.get('delimiter', default=',')) -%}
   {%- set glue_register = config.get('glue_register', default=false) -%}
   {%- set glue_database = render(config.get('glue_database', default='default')) -%}
+
+  {#
+    For xlsx formats the default location is the same directory as the .sql file.
+    If a `location` is passed in the config then this takes priority.
+    For all other formats the `location` parameter is prioritised.
+  #}
+  {% if format == 'xlsx' and config.get('location', 'not passed') == 'not passed' %}
+    {%- set location = render(model.original_file_path.split('.')[0] + '.' + format) -%}
+  {% else %}
+    {%- set location = render(config.get('location', default=external_location(this, format))) -%}
+  {% endif %}
 
   -- set language - python or sql
   {%- set language = model['language'] -%}
@@ -53,7 +63,7 @@
   {% endif %}
   {% call statement('main', language='sql') -%}
     create or replace view {{ intermediate_relation.include(database=adapter.use_database()) }} as (
-        select * from '{{ location }}'
+        select * from '{{ location.replace(".xlsx", "") }}'
     );
   {%- endcall %}
 
