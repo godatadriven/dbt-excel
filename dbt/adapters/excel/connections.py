@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from dbt.adapters.duckdb.connections import DuckDBConnectionManager
-from dbt.adapters.duckdb.connections import DuckDBCredentials
+from dbt.adapters.duckdb import DuckDBConnectionManager
+from dbt.adapters.duckdb import DuckDBCredentials
 
 
 @dataclass
