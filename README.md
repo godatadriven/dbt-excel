@@ -1,3 +1,10 @@
+# :no_entry: [DEPRECATED] `dbt-excel` is not supported use `dbt-duckdb` instead
+
+[dbt-excel](https://dbt-excel.com/) was an April fools joke. Though, the joke
+inspired adding Excel capabilities to `dbt-duckdb`. If you would like to use
+`dbt-excel`, use [`dbt-duckdb`](https://github.com/jwills/dbt-duckdb) with the
+plugins capabilities to read from and write to Excel files.
+
 # dbt-excel: Unleash the Power of Excel in Your Data Stack
 
 ## The ultimate solution for the data-driven world
