@@ -2,7 +2,6 @@
 
 config(
   materialized='external',
-  location='./customers.xlsx',
   format="xlsx"
 )
 

@@ -1,7 +1,7 @@
 from unittest import mock
 
 from botocore.credentials import Credentials
-from dbt.adapters.duckdb.connections import Attachment
+from dbt.adapters.duckdb.credentials import Attachment
 
 from dbt.adapters.excel.connections import ExcelCredentials
 
