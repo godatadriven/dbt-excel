@@ -1,0 +1,6 @@
+dbt_excel_project:
+  target: test
+  outputs:
+   test:
+     type: excel
+     path: ":memory:"
